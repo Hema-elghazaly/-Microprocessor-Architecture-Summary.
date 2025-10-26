@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microprocessor Architecture Summary</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #0078ff;
+        --primary-dark: #0056cc;
+        --secondary: #00c4b3;
+        --secondary-dark: #00a396;
+        --bg-light: #f8f9fc;
+        --bg-dark: #0f111a;
+        --text-light: #222;
+        --text-dark: #eee;
+        --card-light: #fff;
+        --card-dark: #1c1f2b;
+        --border-light: #e0e0e0;
+        --border-dark: #2a2e3e;
+        --success: #28a745;
+        --danger: #dc3545;
+        --warning: #ffc107;
+        --transition: 0.3s ease;
+        --border-radius: 12px;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --box-shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-light);
+        transition: background-color var(--transition), color var(--transition);
+        line-height: 1.6;
+      }
+
+      body.dark {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+      }
+
+      header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #fff;
+        padding: 1.2rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.3s;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .tabs-container {
+        background: var(--card-light);
+        margin: 1.5rem auto;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+      }
+
+      body.dark .tabs-container {
+        background: var(--card-dark);
+        box-shadow: var(--box-shadow-dark);
+      }
+
+      .tabs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 1rem;
+        gap: 8px;
+      }
+
+      .tab {
+        background: var(--card-light);
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .tab.active,
+      .tab:hover {
+        background: var(--primary);
+        color: #fff;
+        transform: translateY(-2px);
+      }
+
+      body.dark .tab {
+        background: var(--card-dark);
+        border-color: var(--secondary);
+        color: var(--secondary);
+      }
+
+      body.dark .tab.active,
+      body.dark .tab:hover {
+        background: var(--secondary);
+        color: #fff;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 2rem;
+        animation: fadeIn 0.6s ease;
+        background: var(--card-light);
+        border-radius: var(--border-radius);
+        margin: 1.5rem auto;
+        box-shadow: var(--box-shadow);
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      body.dark .tab-content {
+        background: var(--card-dark);
+        box-shadow: var(--box-shadow-dark);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h2 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary);
+        font-weight: 600;
+      }
+
+      body.dark h2 {
+        color: var(--secondary);
+        border-bottom-color: var(--secondary);
+      }
+
+      h3 {
+        color: var(--primary);
+        margin: 1.5rem 0 1rem;
+        font-weight: 600;
+      }
+
+      body.dark h3 {
+        color: var(--secondary);
+      }
+
+      p {
+        margin-bottom: 1rem;
+      }
+
+      ul,
+      ol {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+      }
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      .content-card {
+        background: var(--bg-light);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--primary);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      body.dark .content-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-left-color: var(--secondary);
+      }
+
+      .highlight {
+        background: rgba(0, 120, 255, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        border-left: 3px solid var(--primary);
+      }
+
+      body.dark .highlight {
+        background: rgba(0, 196, 179, 0.1);
+        border-left-color: var(--secondary);
+      }
+
+      .btn {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+      }
+
+      .btn-secondary:hover {
+        background: var(--secondary-dark);
+      }
+
+      .quiz-question {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        background: var(--bg-light);
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      body.dark .quiz-question {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .quiz-question p {
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .quiz-options label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .quiz-options label:hover {
+        background: rgba(0, 120, 255, 0.1);
+      }
+
+      body.dark .quiz-options label:hover {
+        background: rgba(0, 196, 179, 0.1);
+      }
+
+      .quiz-options input[type="radio"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      .result {
+        font-weight: bold;
+        margin-top: 20px;
+        font-size: 1.2rem;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        text-align: center;
+      }
+
+      .result.success {
+        background: rgba(40, 167, 69, 0.1);
+        color: var(--success);
+        border: 1px solid var(--success);
+      }
+
+      .result.error {
+        background: rgba(220, 53, 69, 0.1);
+        color: var(--danger);
+        border: 1px solid var(--danger);
+      }
+
+      .progress-bar {
+        height: 6px;
+        background: #e0e0e0;
+        border-radius: 3px;
+        margin: 1rem 0;
+        overflow: hidden;
+      }
+
+      body.dark .progress-bar {
+        background: #2a2e3e;
+      }
+
+      .progress {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 3px;
+        transition: width 0.3s;
+      }
+
+      body.dark .progress {
+        background: var(--secondary);
+      }
+
+      .footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid var(--border-light);
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      body.dark .footer {
+        border-top-color: var(--border-dark);
+        color: #aaa;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        header {
+          padding: 1rem;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        header h1 {
+          font-size: 1.3rem;
+        }
+
+        .tabs {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .tab {
+          justify-content: center;
+        }
+
+        .tab-content {
+          padding: 1.5rem;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        .theme-toggle,
+        .btn {
+          display: none;
+        }
+
+        .tab-content {
+          display: block !important;
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .tabs-container {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-content">
+        <h1>
+          <i class="fas fa-microchip"></i> Microprocessor Architecture Summary
+        </h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <i class="fas fa-moon"></i> Dark Mode
+        </button>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="tabs-container">
+        <div class="tabs">
+          <div class="tab active" data-tab="page1">
+            <i class="fas fa-history"></i> Page 1
+          </div>
+          <div class="tab" data-tab="page2">
+            <i class="fas fa-memory"></i> Page 2
+          </div>
+          <div class="tab" data-tab="page3">
+            <i class="fas fa-map-marked-alt"></i> Page 3
+          </div>
+          <div class="tab" data-tab="page4">
+            <i class="fas fa-table"></i> Page 4
+          </div>
+          <div class="tab" data-tab="page5">
+            <i class="fas fa-layer-group"></i> Page 5
+          </div>
+          <div class="tab" data-tab="quiz">
+            <i class="fas fa-question-circle"></i> Quiz
+          </div>
+        </div>
+      </div>
+
+      <div id="page1" class="tab-content active">
+        <h2>
+          <i class="fas fa-history"></i> Page 1 – Microprocessor Evolution &
+          Basic Architecture
+        </h2>
+
+        <div class="content-card">
+          <h3>1. Microprocessor Evolution / تطور المعالجات الدقيقة</h3>
+          <p>
+            • The first microprocessor was Intel 4004 (4-bit).<br />• أول معالج
+            دقيق كان Intel 4004 ذو أربعة بتات.
+          </p>
+          <p>
+            • Intel 8008 and 8080 were 8-bit processors and used in early
+            microcomputers.<br />• المعالجان Intel 8008 و 8080 كانا ثمانيي البت
+            واُستخدما في أوائل الحواسيب الصغيرة.
+          </p>
+          <p>
+            • The 8085 was the last 8-bit general-purpose CPU developed by
+            Intel.<br />• المعالج 8085 كان آخر معالج ثماني البت عام الاستخدام من
+            إنتل.
+          </p>
+          <p>
+            • The 8086 and 8088 introduced a 16-bit architecture and the x86
+            family was born.<br />• قدّم 8086 و 8088 بنية 16 بتًا ونشأت عائلة
+            x86.
+          </p>
+          <p>
+            • Later models (80286, 80386, 80486, Pentium, Core 2) expanded to
+            32- and 64-bit systems.<br />• الإصدارات اللاحقة (80286، 80386،
+            80486، بنتيوم، Core 2) تطورت إلى أنظمة 32 و 64 بت.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>
+            2. Microprocessor vs Microcontroller / المعالج الدقيق مقابل المتحكم
+            الدقيق
+          </h3>
+          <p>
+            • Microprocessor is the heart of a computer system.<br />• المعالج
+            الدقيق هو قلب نظام الحاسوب.
+          </p>
+          <p>
+            • Microcontroller is the heart of an embedded system.<br />• المتحكم
+            الدقيق هو قلب النظام المدمج.
+          </p>
+          <p>
+            • Microprocessor requires external memory and I/O devices, making
+            the circuit complex.<br />• يحتاج المعالج الدقيق إلى ذاكرة وأجهزة
+            إدخال/إخراج خارجية مما يجعل الدائرة معقدة.
+          </p>
+          <p>
+            • Microcontroller has built-in memory and I/O, so the circuit is
+            simpler and cheaper.<br />• المتحكم الدقيق يحتوي على ذاكرة ووحدات
+            إدخال/إخراج مضمّنة فيكون أبسط وأرخص.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>3. Basic Architecture Concepts / مفاهيم البنية الأساسية</h3>
+          <p>
+            • A microprocessor-based system contains the CPU, memory, I/O ports,
+            and system bus.<br />• النظام المعتمد على المعالج الدقيق يحتوي على
+            وحدة المعالجة المركزية والذاكرة ومنافذ الإدخال/الإخراج وناقل النظام.
+          </p>
+          <p>
+            • The CPU consists of the Arithmetic Logic Unit (ALU), Control Unit
+            (CU), and Registers.<br />• تتكون وحدة المعالجة المركزية من وحدة
+            الحساب والمنطق (ALU) ووحدة التحكم (CU) والسجلات.
+          </p>
+          <p>
+            • The ALU performs arithmetic and logical operations.<br />• تقوم
+            وحدة ALU بالعمليات الحسابية والمنطقية.
+          </p>
+          <p>
+            • The Control Unit fetches instructions and coordinates the
+            execution of tasks.<br />• تقوم وحدة التحكم بجلب الأوامر وتنسيق
+            تنفيذ المهام.
+          </p>
+          <p>
+            • Registers are small high-speed storage locations used during
+            processing.<br />• السجلات عبارة عن أماكن تخزين صغيرة وسريعة تُستخدم
+            أثناء المعالجة.
+          </p>
+          <p>
+            • The system bus is divided into address, data, and control
+            buses.<br />• ينقسم ناقل النظام إلى ناقل العناوين وناقل البيانات
+            وناقل التحكم.
+          </p>
+        </div>
+      </div>
+
+      <div id="page2" class="tab-content">
+        <h2><i class="fas fa-memory"></i> Page 2 – Registers & Flags</h2>
+
+        <div class="content-card">
+          <h3>1. Registers / السجلات</h3>
+          <p>
+            Registers are small, fast storage locations inside the CPU used to
+            hold data temporarily.<br />السجلات هي مواقع تخزين صغيرة وسريعة داخل
+            وحدة المعالجة المركزية تُستخدم لتخزين البيانات مؤقتًا.
+          </p>
+          <p>
+            They are the closest memory to the processor core, allowing very
+            quick access.<br />وهي أقرب ذاكرة إلى نواة المعالج مما يتيح وصولًا
+            سريعًا جدًا.
+          </p>
+          <p>
+            The 8086 and its successors include several types of registers:
+            general purpose, special purpose, and segment registers.<br />يضم
+            المعالج 8086 وخلفاؤه عدة أنواع من السجلات: سجلات الاستخدام العام،
+            وسجلات خاصة، وسجلات مقاطع.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>2. General-Purpose Registers / سجلات الاستخدام العام</h3>
+          <p>
+            <b>AX (Accumulator):</b> used for arithmetic, logic, and I/O
+            operations.<br /><b>AX (المجمع):</b> يُستخدم في العمليات الحسابية
+            والمنطقية وعمليات الإدخال والإخراج.
+          </p>
+          <p>
+            <b>BX (Base Register):</b> often holds the base address for memory
+            operations.<br /><b>BX (سجل الأساس):</b> غالبًا ما يحتفظ بعنوان
+            الأساس لعمليات الذاكرة.
+          </p>
+          <p>
+            <b>CX (Counter):</b> stores loop counts and shift counts for
+            instructions.<br /><b>CX (العداد):</b> يخزن عدادات الحلقات وعدد مرات
+            الإزاحة للأوامر.
+          </p>
+          <p>
+            <b>DX (Data Register):</b> used in multiplication, division, and I/O
+            port addressing.<br /><b>DX (سجل البيانات):</b> يُستخدم في عمليات
+            الضرب والقسمة وعنونة منافذ الإدخال والإخراج.
+          </p>
+          <p>
+            <b>SI (Source Index) & DI (Destination Index):</b> used for string
+            and memory block operations.<br /><b
+              >SI (فهرس المصدر) و DI (فهرس الوجهة):</b
+            >
+            يُستخدمان في أوامر السلاسل وكتل الذاكرة.
+          </p>
+          <p>
+            <b>BP (Base Pointer):</b> points to data within the stack
+            segment.<br /><b>BP (مؤشر الأساس):</b> يشير إلى بيانات داخل مقطع
+            المكدس.
+          </p>
+          <p>
+            <b>SP (Stack Pointer):</b> points to the top of the stack.<br /><b
+              >SP (مؤشر المكدس):</b
+            >
+            يشير إلى أعلى المكدس.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>3. Segment Registers / سجلات المقاطع</h3>
+          <p>
+            Segment registers define the starting addresses of memory segments
+            in real mode.<br />تحدد سجلات المقاطع العناوين الابتدائية لمقاطع
+            الذاكرة في الوضع الحقيقي.
+          </p>
+          <p>
+            <b>CS (Code Segment):</b> holds the address of the current program
+            code.<br /><b>CS (مقطع الشيفرة):</b> يحتفظ بعنوان الكود الجاري
+            تنفيذه.
+          </p>
+          <p>
+            <b>DS (Data Segment):</b> stores addresses of variables and data
+            structures.<br /><b>DS (مقطع البيانات):</b> يخزن عناوين المتغيرات
+            وهياكل البيانات.
+          </p>
+          <p>
+            <b>SS (Stack Segment):</b> defines the area of memory used for the
+            stack.<br /><b>SS (مقطع المكدس):</b> يحدد منطقة الذاكرة المستخدمة
+            للمكدس.
+          </p>
+          <p>
+            <b>ES (Extra Segment):</b> an additional data segment used by string
+            instructions.<br /><b>ES (مقطع إضافي):</b> مقطع بيانات إضافي تستخدمه
+            أوامر السلاسل.
+          </p>
+          <p>
+            <b>FS and GS:</b> extra segments available in 80386 and later
+            processors for OS internal use.<br /><b>FS و GS:</b> مقاطع إضافية
+            ظهرت في 80386 وما بعده تُستخدم داخليًا بواسطة أنظمة التشغيل.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>4. Flags / الأعلام</h3>
+          <p>
+            Flags are single-bit indicators in the RFLAGS register that reflect
+            the status of operations and control the processor.<br />الأعلام هي
+            مؤشرات من بت واحد داخل سجل RFLAGS تعكس حالة العمليات وتتحكم في
+            المعالج.
+          </p>
+          <p>
+            <b>CF (Carry Flag):</b> set when an arithmetic carry or borrow
+            occurs.<br /><b>CF (علم الحمل):</b> يُضبط عند حدوث حمل أو اقتراض في
+            عملية حسابية.
+          </p>
+          <p>
+            <b>ZF (Zero Flag):</b> set when the result of an operation is
+            zero.<br /><b>ZF (علم الصفر):</b> يُضبط عندما تكون نتيجة العملية
+            صفرًا.
+          </p>
+          <p>
+            <b>SF (Sign Flag):</b> reflects the sign (positive/negative) of the
+            result.<br /><b>SF (علم الإشارة):</b> يعكس إشارة النتيجة (موجبة /
+            سالبة).
+          </p>
+          <p>
+            <b>OF (Overflow Flag):</b> indicates arithmetic overflow for signed
+            operations.<br /><b>OF (علم الفائض):</b> يُشير إلى حدوث فائض عددي في
+            العمليات الموقّعة.
+          </p>
+          <p>
+            <b>PF (Parity Flag):</b> set if the number of 1 bits in the result
+            is even.<br /><b>PF (علم التكافؤ):</b> يُضبط إذا كان عدد البتات 1 في
+            النتيجة عددًا زوجيًا.
+          </p>
+          <p>
+            <b>AF (Auxiliary Carry):</b> indicates carry between bit 3 and bit 4
+            in BCD operations.<br /><b>AF (الحمل المساعد):</b> يُشير إلى حمل بين
+            البت 3 و البت 4 في عمليات BCD.
+          </p>
+          <p>
+            Flags help make decisions in programs through conditional jumps and
+            comparisons.<br />تساعد الأعلام البرامج على اتخاذ قرارات من خلال
+            القفزات الشرطية والمقارنات.
+          </p>
+        </div>
+      </div>
+
+      <div id="page3" class="tab-content">
+        <h2>
+          <i class="fas fa-map-marked-alt"></i> Page 3 – Memory Addressing Modes
+        </h2>
+
+        <div class="content-card">
+          <h3>1. Real Mode Memory Addressing / العنونة في الوضع الحقيقي</h3>
+          <p>
+            In real mode, the processor can address only the first 1 MB of
+            memory.<br />في الوضع الحقيقي، يمكن للمعالج عنونة أول 1 ميجابايت فقط
+            من الذاكرة.
+          </p>
+          <p>
+            This area is known as conventional or DOS memory.<br />تُعرف هذه
+            المنطقة باسم الذاكرة التقليدية أو ذاكرة نظام DOS.
+          </p>
+          <p>
+            Each memory address is formed by combining a segment address with an
+            offset.<br />يتكوّن كل عنوان ذاكرة من دمج عنوان مقطع مع إزاحة.
+          </p>
+          <p>
+            The segment address defines the start of a 64 KB memory block.<br />يحدد
+            عنوان المقطع بداية كتلة ذاكرة بحجم 64 كيلوبايت.
+          </p>
+          <p>
+            The offset specifies the exact location within that 64 KB
+            segment.<br />تحدد الإزاحة الموقع الدقيق داخل ذلك المقطع.
+          </p>
+          <p>
+            For example, segment:offset = 1000:2000 → physical address =
+            12000h.<br />على سبيل المثال، المقطع:الإزاحة = 1000:2000 → العنوان
+            الفعلي = ‎12000h.
+          </p>
+          <p>
+            This addressing scheme allows programs to be relocated easily in
+            memory.<br />تتيح هذه الطريقة في العنونة نقل البرامج بسهولة داخل
+            الذاكرة.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>2. Protected Mode Addressing / العنونة في الوضع المحمي</h3>
+          <p>
+            Protected mode was introduced in the 80286 processor and later
+            versions.<br />تم تقديم الوضع المحمي في المعالج 80286 والإصدارات
+            اللاحقة.
+          </p>
+          <p>
+            It allows the processor to access memory beyond 1 MB with safety
+            mechanisms.<br />يتيح هذا الوضع للمعالج الوصول إلى ذاكرة تتجاوز 1
+            ميجابايت مع آليات حماية.
+          </p>
+          <p>
+            Each segment is described by a descriptor in a table called the
+            Descriptor Table.<br />يتم وصف كل مقطع بواسطة واصف في جدول يُعرف
+            باسم جدول الأوصاف.
+          </p>
+          <p>
+            The segment register contains a selector that points to the
+            descriptor entry.<br />يحتوي سجل المقطع على محدد يشير إلى إدخال
+            الوصف المناسب.
+          </p>
+          <p>
+            There are two main tables: the Global Descriptor Table (GDT) and
+            Local Descriptor Table (LDT).<br />يوجد جدولان رئيسيان: جدول الأوصاف
+            العام (GDT) وجدول الأوصاف المحلي (LDT).
+          </p>
+          <p>
+            Each descriptor defines the base address, limit, and access rights
+            of the segment.<br />يحدد كل واصف عنوان البداية والحدود وحقوق الوصول
+            للمقطع.
+          </p>
+          <p>
+            The operating system uses these descriptors to isolate and protect
+            processes.<br />يستخدم نظام التشغيل هذه الأوصاف لعزل العمليات
+            وحمايتها.
+          </p>
+          <p>
+            If a program tries to access unauthorized memory, a General
+            Protection Fault occurs.<br />إذا حاول برنامج الوصول إلى ذاكرة غير
+            مصرح بها، يحدث خطأ حماية عام (GPF).
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>3. Flat Mode Memory / الذاكرة في الوضع المسطح</h3>
+          <p>
+            Flat mode is used in modern 32-bit and 64-bit systems.<br />يُستخدم
+            الوضع المسطح في الأنظمة الحديثة ذات 32 و 64 بت.
+          </p>
+          <p>
+            In flat mode, all segments are combined into a single continuous
+            address space.<br />في هذا الوضع، تُدمج جميع المقاطع في مساحة عنونة
+            واحدة متصلة.
+          </p>
+          <p>
+            The first byte address is 00000000h and the last can reach up to
+            FFFFFFFFFFh in 64-bit systems.<br />يبدأ أول عنوان بايت من 00000000h
+            ويمكن أن يصل الأخير إلى FFFFFFFFFFh في الأنظمة ذات 64 بت.
+          </p>
+          <p>
+            This model simplifies programming and memory management.<br />يُبسّط
+            هذا النموذج عملية البرمجة وإدارة الذاكرة.
+          </p>
+          <p>
+            Modern operating systems such as Windows and Linux use flat
+            addressing for user applications.<br />تستخدم أنظمة التشغيل الحديثة
+            مثل ويندوز ولينكس العنونة المسطحة لتطبيقات المستخدم.
+          </p>
+          <p>
+            There are no segment boundaries, allowing direct access to a large
+            linear address space.<br />لا توجد حدود للمقاطع، مما يسمح بالوصول
+            المباشر إلى مساحة عنونة خطية كبيرة.
+          </p>
+        </div>
+      </div>
+
+      <div id="page4" class="tab-content">
+        <h2>
+          <i class="fas fa-table"></i> Page 4 – Descriptor Tables &
+          Program-Invisible Registers
+        </h2>
+
+        <div class="content-card">
+          <h3>1. Descriptor Tables / جداول الأوصاف</h3>
+          <p>
+            The Global Descriptor Table (GDT) contains segment definitions that
+            apply to all programs.<br />يحتوي جدول الأوصاف العام (GDT) على
+            تعريفات المقاطع التي تنطبق على جميع البرامج.
+          </p>
+          <p>
+            The Local Descriptor Table (LDT) contains segment definitions
+            specific to an application.<br />يحتوي جدول الأوصاف المحلي (LDT) على
+            تعريفات المقاطع الخاصة بتطبيق محدد.
+          </p>
+          <p>
+            Each entry in these tables is called a descriptor and is 8 bytes
+            long.<br />يُسمّى كل إدخال في هذه الجداول واصفًا ويبلغ طوله 8 بايت.
+          </p>
+          <p>
+            A descriptor defines the segment's base address, its size (limit),
+            and its access rights.<br />يحدد الواصل عنوان بداية المقطع وحجمه
+            (الحدود) وحقوق الوصول الخاصة به.
+          </p>
+          <p>
+            Descriptors allow the processor to locate and protect memory
+            segments efficiently.<br />تُمكّن الأوصاف المعالج من تحديد مواقع
+            مقاطع الذاكرة وحمايتها بكفاءة.
+          </p>
+          <p>
+            Each descriptor can represent code, data, or system segments.<br />يمكن
+            لكل واصف أن يمثل مقطع كود أو بيانات أو نظام.
+          </p>
+          <p>
+            The Access Rights byte specifies the privilege level and segment
+            type.<br />يحدد بايت حقوق الوصول مستوى الامتياز ونوع المقطع.
+          </p>
+          <p>
+            If a segment exceeds its limit or violates access rights, a General
+            Protection Fault occurs.<br />إذا تجاوز المقطع حدوده أو خالف حقوق
+            الوصول، يحدث خطأ حماية عام.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>2. Segment Selectors / محددات المقاطع</h3>
+          <p>
+            A segment selector is a 16-bit value stored in a segment
+            register.<br />محدد المقطع هو قيمة 16 بت تُخزَّن في سجل المقطع.
+          </p>
+          <p>
+            The selector contains three fields: Index, Table Indicator (TI), and
+            Requested Privilege Level (RPL).<br />يحتوي المحدد على ثلاث خانات:
+            الفهرس، مؤشر الجدول (TI)، ومستوى الامتياز المطلوب (RPL).
+          </p>
+          <p>
+            The TI bit determines whether the descriptor is in the GDT or
+            LDT.<br />يحدد البِت TI ما إذا كان الواصل في جدول GDT أو LDT.
+          </p>
+          <p>
+            The RPL field specifies the privilege level of the request (0 =
+            highest, 3 = lowest).<br />يحدد حقل RPL مستوى امتياز الطلب (0 =
+            الأعلى، 3 = الأدنى).
+          </p>
+          <p>
+            The combination of selector and descriptor defines a memory
+            segment.<br />يُحدّد الجمع بين المحدد والواصف مقطع ذاكرة محددًا.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>3. Program-Invisible Registers / السجلات غير المرئية للبرامج</h3>
+          <p>
+            Some registers in protected mode are not directly accessible by
+            software.<br />بعض السجلات في الوضع المحمي لا يمكن الوصول إليها
+            مباشرة بواسطة البرمجيات.
+          </p>
+          <p>
+            These are called program-invisible registers because they are
+            managed internally by the CPU.<br />تُسمى هذه السجلات غير مرئية
+            للبرامج لأنها تُدار داخليًا بواسطة وحدة المعالجة.
+          </p>
+          <p>
+            Examples include GDTR (Global Descriptor Table Register), IDTR
+            (Interrupt Descriptor Table Register), and LDTR (Local Descriptor
+            Table Register).<br />ومن أمثلتها سجلات GDTR و IDTR و LDTR.
+          </p>
+          <p>
+            GDTR stores the base address and limit of the GDT.<br />يخزن GDTR
+            عنوان الأساس والحد الأقصى لجدول GDT.
+          </p>
+          <p>
+            IDTR stores the address and limit of the Interrupt Descriptor Table
+            (IDT).<br />يخزن IDTR عنوان وجدول مقاطعات النظام (IDT).
+          </p>
+          <p>
+            LDTR points to the Local Descriptor Table of the currently running
+            process.<br />يشير LDTR إلى جدول الأوصاف المحلي للعملية الجارية.
+          </p>
+          <p>
+            Each segment register has a hidden portion used as a cache for
+            descriptor information.<br />يحتوي كل سجل مقطع على جزء خفي يُستخدم
+            كذاكرة مؤقتة لمعلومات الواصف.
+          </p>
+          <p>
+            When a new selector is loaded, the processor automatically loads the
+            corresponding descriptor into the hidden part.<br />عند تحميل محدد
+            جديد، يقوم المعالج تلقائيًا بتحميل الواصف المقابل إلى الجزء الخفي.
+          </p>
+          <p>
+            This mechanism speeds up memory access by avoiding repeated lookups
+            in descriptor tables.<br />تُسرّع هذه الآلية الوصول إلى الذاكرة
+            بتجنّب عمليات البحث المتكررة في جداول الأوصاف.
+          </p>
+        </div>
+      </div>
+
+      <div id="page5" class="tab-content">
+        <h2>
+          <i class="fas fa-layer-group"></i> Page 5 – Flat Mode Memory & Final
+          Summary
+        </h2>
+
+        <div class="content-card">
+          <h3>1. Flat Mode Memory / الذاكرة في الوضع المسطح</h3>
+          <p>
+            Flat mode memory is a modern addressing model where the entire
+            memory is seen as one large continuous block.<br />الذاكرة في الوضع
+            المسطح هي نموذج عنونة حديث تُرى فيه الذاكرة بأكملها ككتلة كبيرة
+            متصلة واحدة.
+          </p>
+          <p>
+            It eliminates the concept of segmentation by combining all segments
+            into one linear address space.<br />يُلغي مفهوم التقسيم عن طريق دمج
+            جميع المقاطع في مساحة عنونة خطية واحدة.
+          </p>
+          <p>
+            The first memory address is 00000000h, and the last address can go
+            up to FFFFFFFFFFh in 64-bit systems.<br />يبدأ أول عنوان ذاكرة من
+            00000000h، ويمكن أن يصل آخر عنوان إلى FFFFFFFFFFh في الأنظمة ذات 64
+            بت.
+          </p>
+          <p>
+            Flat mode simplifies programming, as software can access any memory
+            address directly without segment registers.<br />يُبسط الوضع المسطح
+            البرمجة لأن البرامج يمكنها الوصول إلى أي عنوان ذاكرة مباشرة دون
+            الحاجة إلى سجلات المقاطع.
+          </p>
+          <p>
+            Operating systems like Windows and Linux run user applications in
+            flat mode.<br />تعمل أنظمة التشغيل مثل ويندوز ولينكس على تشغيل
+            تطبيقات المستخدم في الوضع المسطح.
+          </p>
+          <p>
+            This model supports advanced multitasking, virtual memory, and large
+            address spaces.<br />يدعم هذا النموذج تعدد المهام المتقدم والذاكرة
+            الافتراضية ومساحات العنونة الكبيرة.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>2. Key Comparisons / المقارنات الرئيسية</h3>
+          <p>
+            <b>Real Mode:</b> Limited to 1MB, uses segment:offset addressing.<br /><b
+              >الوضع الحقيقي:</b
+            >
+            محدود بـ 1 ميجابايت، ويستخدم العنونة بالمقطع والإزاحة.
+          </p>
+          <p>
+            <b>Protected Mode:</b> Uses descriptors and selectors for memory
+            protection.<br /><b>الوضع المحمي:</b> يستخدم الأوصاف والمحددات
+            لحماية الذاكرة.
+          </p>
+          <p>
+            <b>Flat Mode:</b> No segmentation; uses one continuous memory
+            space.<br /><b>الوضع المسطح:</b> لا يستخدم التقسيم، بل مساحة ذاكرة
+            واحدة متصلة.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>
+            3. Microprocessor Modes Overview / نظرة عامة على أوضاع المعالج
+          </h3>
+          <ul>
+            <li>Real Mode → 8086/8088 – 1 MB memory</li>
+            <li>Protected Mode → 80286 and later – up to 4 GB</li>
+            <li>
+              Flat Mode → 80386 and later – linear addressing up to 64-bit range
+            </li>
+          </ul>
+          <p>
+            الوضع الحقيقي في معالجات 8086/8088 يصل إلى 1 ميجابايت، والوضع المحمي
+            في 80286 وما بعده يصل إلى 4 جيجابايت، والوضع المسطح في 80386 وما
+            بعده يستخدم عنونة خطية حتى مدى 64 بت.
+          </p>
+        </div>
+
+        <div class="content-card">
+          <h3>4. Final Summary / الملخص النهائي</h3>
+          <p>
+            • Microprocessor is the core of computing systems.<br />• المعالج
+            الدقيق هو جوهر أنظمة الحوسبة.
+          </p>
+          <p>
+            • It evolved from 4-bit to 64-bit architectures.<br />• تطور من بنية
+            4 بت إلى 64 بت.
+          </p>
+          <p>
+            • Registers store and process data internally at high speed.<br />•
+            تخزن السجلات البيانات داخليًا وتُعالجها بسرعة عالية.
+          </p>
+          <p>
+            • Flags reflect the status of arithmetic and logic operations.<br />•
+            تُظهر الأعلام حالة العمليات الحسابية والمنطقية.
+          </p>
+          <p>
+            • Real, Protected, and Flat modes define how memory is accessed.<br />•
+            تحدد الأوضاع الحقيقي والمحمي والمسطح كيفية الوصول إلى الذاكرة.
+          </p>
+          <p>
+            • Modern processors use protected and flat modes for security and
+            performance.<br />• تستخدم المعالجات الحديثة الوضعين المحمي والمسطح
+            لتحقيق الأمان والأداء العالي.
+          </p>
+        </div>
+
+        <div class="highlight">
+          <h3>
+            <i class="fas fa-flag-checkered"></i> End of Lecture 2 – Chapter 2
+            ✅
+          </h3>
+          <p>
+            <i>Next tab → Quiz (30 Questions)</i><br /><i
+              >التبويب التالي → اختبار المراجعة (30 سؤال)</i
+            >
+          </p>
+        </div>
+      </div>
+
+      <div id="quiz" class="tab-content">
+        <h2><i class="fas fa-question-circle"></i> Quiz – 30 Questions</h2>
+        <p>
+          Choose the correct answer for each question below.<br />اختر الإجابة
+          الصحيحة لكل سؤال أدناه.
+        </p>
+
+        <div class="progress-bar">
+          <div class="progress" id="quiz-progress" style="width: 0%"></div>
+        </div>
+
+        <div id="questions"></div>
+
+        <div style="text-align: center; margin: 2rem 0">
+          <button class="btn submit-btn" onclick="submitQuiz()">
+            <i class="fas fa-paper-plane"></i> Submit Answers
+          </button>
+          <button class="btn btn-secondary restart-btn" onclick="restartQuiz()">
+            <i class="fas fa-redo"></i> Restart Quiz
+          </button>
+        </div>
+
+        <div class="result" id="result"></div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>
+        © 2023 Microprocessor Architecture Summary | Developed for Educational
+        Purposes
+      </p>
+    </footer>
+
+    <!-- Simple sound effects -->
+    <audio id="correctSound" preload="auto">
+      <source
+        src="https://cdn.pixabay.com/audio/2022/03/15/audio_ba36d5ffda.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <audio id="wrongSound" preload="auto">
+      <source
+        src="https://cdn.pixabay.com/audio/2022/03/15/audio_2af0bfa792.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      // Theme toggle
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        const themeToggle = document.querySelector(".theme-toggle");
+        const icon = themeToggle.querySelector("i");
+
+        if (document.body.classList.contains("dark")) {
+          themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        } else {
+          themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        }
+      }
+
+      // Tab functionality
+      const tabs = document.querySelectorAll(".tab");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          contents.forEach((c) => c.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.tab).classList.add("active");
+
+          // Update progress bar for quiz
+          if (tab.dataset.tab === "quiz") {
+            updateQuizProgress();
+          }
+        });
+      });
+
+      // Quiz data
+      const quizData = [
+        {
+          q: "The first microprocessor developed by Intel was ______.",
+          o: ["4004", "8080", "8086"],
+          a: 0,
+        },
+        {
+          q: "The 8086 microprocessor is a ______ bit processor.",
+          o: ["16", "8", "32"],
+          a: 0,
+        },
+        {
+          q: "The microcontroller contains memory and I/O ______.",
+          o: ["on-chip", "external only", "none"],
+          a: 0,
+        },
+        {
+          q: "AX register is known as ______.",
+          o: ["Accumulator", "Counter", "Base"],
+          a: 0,
+        },
+        {
+          q: "The BX register is mainly used as a ______ register.",
+          o: ["Base", "Data", "Control"],
+          a: 0,
+        },
+        {
+          q: "CX register functions as a ______.",
+          o: ["Counter", "Stack", "Address"],
+          a: 0,
+        },
+        {
+          q: "DX is used in ______ operations.",
+          o: ["Multiplication/Division", "Logic", "Input only"],
+          a: 0,
+        },
+        {
+          q: "SI and DI are mainly used in ______ operations.",
+          o: ["String", "Arithmetic", "I/O"],
+          a: 0,
+        },
+        {
+          q: "The segment that stores code is ______.",
+          o: ["CS", "DS", "SS"],
+          a: 0,
+        },
+        {
+          q: "The stack segment is defined by the register ______.",
+          o: ["SS", "DS", "ES"],
+          a: 0,
+        },
+        {
+          q: "The flag that indicates zero result is ______.",
+          o: ["ZF", "SF", "CF"],
+          a: 0,
+        },
+        {
+          q: "Overflow flag (OF) indicates ______ overflow.",
+          o: ["Signed", "Unsigned", "No"],
+          a: 0,
+        },
+        {
+          q: "Carry flag (CF) becomes 1 when ______.",
+          o: ["Carry/Borrow occurs", "Zero result", "None"],
+          a: 0,
+        },
+        {
+          q: "In real mode, maximum addressable memory is ______.",
+          o: ["1 MB", "4 MB", "4 GB"],
+          a: 0,
+        },
+        {
+          q: "In real mode, address = segment × 10h + ______.",
+          o: ["offset", "selector", "limit"],
+          a: 0,
+        },
+        {
+          q: "Protected mode was introduced in Intel ______.",
+          o: ["80286", "8086", "80486"],
+          a: 0,
+        },
+        {
+          q: "The descriptor tables used are ______.",
+          o: ["GDT & LDT", "BIOS & RAM", "L1 & L2"],
+          a: 0,
+        },
+        {
+          q: "The size of each descriptor entry is ______ bytes.",
+          o: ["8", "4", "16"],
+          a: 0,
+        },
+        {
+          q: "The register storing the address of GDT is ______.",
+          o: ["GDTR", "IDTR", "LDTR"],
+          a: 0,
+        },
+        {
+          q: "The register storing the address of IDT is ______.",
+          o: ["IDTR", "GDTR", "TR"],
+          a: 0,
+        },
+        {
+          q: "The RFLAGS register holds ______.",
+          o: ["status flags", "addresses", "instructions"],
+          a: 0,
+        },
+        {
+          q: "The flat mode removes ______ boundaries.",
+          o: ["Segment", "Flag", "Stack"],
+          a: 0,
+        },
+        {
+          q: "Flat mode is used in ______ systems.",
+          o: ["Modern 32/64-bit", "8086", "DOS"],
+          a: 0,
+        },
+        {
+          q: "Flat addressing uses ______ memory space.",
+          o: ["Continuous", "Segmented", "Paged only"],
+          a: 0,
+        },
+        {
+          q: "The 80386 processor supports ______ bit mode.",
+          o: ["32", "16", "8"],
+          a: 0,
+        },
+        {
+          q: "The global descriptor table is used for ______.",
+          o: ["All programs", "Single task", "None"],
+          a: 0,
+        },
+        {
+          q: "The local descriptor table is used for ______.",
+          o: ["Specific application", "Hardware", "BIOS"],
+          a: 0,
+        },
+        {
+          q: "Real mode is used by ______ OS.",
+          o: ["DOS", "Windows", "Linux"],
+          a: 0,
+        },
+        {
+          q: "Protected mode is used by ______.",
+          o: ["Windows", "DOS", "ROM BIOS"],
+          a: 0,
+        },
+        {
+          q: "Flat mode addressing is mainly used for ______.",
+          o: ["User applications", "Interrupts", "Device booting"],
+          a: 0,
+        },
+      ];
+
+      // Initialize quiz
+      const questionsDiv = document.getElementById("questions");
+      quizData.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.classList.add("quiz-question");
+        div.innerHTML =
+          `<p><b>Q${i + 1}:</b> ${item.q}</p>` +
+          `<div class="quiz-options">` +
+          item.o
+            .map(
+              (opt, j) =>
+                `<label><input type='radio' name='q${i}' value='${j}'> ${opt}</label>`
+            )
+            .join("") +
+          `</div>`;
+        questionsDiv.appendChild(div);
+      });
+
+      // Update quiz progress
+      function updateQuizProgress() {
+        let answered = 0;
+        quizData.forEach((item, i) => {
+          const selected = document.querySelector(`input[name=q${i}]:checked`);
+          if (selected) answered++;
+        });
+
+        const progress = (answered / quizData.length) * 100;
+        document.getElementById("quiz-progress").style.width = `${progress}%`;
+      }
+
+      // Add event listeners to update progress
+      document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener("change", updateQuizProgress);
+      });
+
+      // Submit quiz
+      function submitQuiz() {
+        let score = 0;
+        let allAnswered = true;
+
+        quizData.forEach((item, i) => {
+          const selected = document.querySelector(`input[name=q${i}]:checked`);
+          if (!selected) {
+            allAnswered = false;
+            return;
+          }
+
+          if (parseInt(selected.value) === item.a) {
+            score++;
+            playSound(true);
+          } else {
+            playSound(false);
+          }
+        });
+
+        if (!allAnswered) {
+          document.getElementById(
+            "result"
+          ).innerHTML = `<div class="result error">Please answer all questions before submitting.</div>`;
+          return;
+        }
+
+        const percentage = (score / quizData.length) * 100;
+        const resultClass = percentage >= 70 ? "success" : "error";
+        const message =
+          percentage >= 70
+            ? "Congratulations! You passed the quiz."
+            : "You need to study more. Try again!";
+
+        document.getElementById(
+          "result"
+        ).innerHTML = `<div class="result ${resultClass}">✅ You scored ${score} / ${
+          quizData.length
+        } (${percentage.toFixed(1)}%)<br>${message}</div>`;
+      }
+
+      // Play sound effects
+      function playSound(correct) {
+        const sound = correct
+          ? document.getElementById("correctSound")
+          : document.getElementById("wrongSound");
+        sound.currentTime = 0;
+        sound.play().catch((e) => console.log("Audio play failed:", e));
+      }
+
+      // Restart quiz
+      function restartQuiz() {
+        // Clear selected answers
+        document
+          .querySelectorAll('input[type="radio"]')
+          .forEach((el) => (el.checked = false));
+        // Clear result
+        document.getElementById("result").innerHTML = "";
+        // Reset progress
+        document.getElementById("quiz-progress").style.width = "0%";
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>
